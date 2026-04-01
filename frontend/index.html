@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Advaya | Supply Chain</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <h2>🌿 ADVAYA</h2>
+        <div class="tabs">
+            <button onclick="showTab('farmer')">Farmer</button>
+            <button onclick="showTab('distributor')">Distributor</button>
+            <button onclick="showTab('public')">Consumer</button>
+        </div>
+    </nav>
+
+    <div id="wallet-status" class="status-bar">MetaMask: Connected 🟢</div>
+
+    <div id="farmer" class="tab-content">
+        <h3>Register New Harvest</h3>
+        <input type="text" id="crop" placeholder="Crop Name (e.g. Saffron)">
+        <input type="text" id="farmerName" placeholder="Farmer Name">
+        <button class="main-btn" onclick="register()">Add to Blockchain</button>
+    </div>
+
+    <div id="distributor" class="tab-content" style="display:none">
+        <h3>Transit Security Tracking</h3>
+        <div class="map-sim">📍 Route: Hub-A ➔ Warehouse-B</div>
+        <button class="sos-btn" onclick="triggerSOS()">🆘 EMERGENCY STOP</button>
+        <p id="sos-msg" style="color:red; display:none; font-weight:bold; margin-top:10px;">⚠️ UNAUTHORIZED STOP DETECTED</p>
+    </div>
+
+    <div id="public" class="tab-content" style="display:none">
+        <h3>Verify Product Integrity</h3>
+        <input type="number" id="searchId" placeholder="Enter Batch ID">
+        <button class="main-btn" onclick="search()">Check Ledger</button>
+        <div id="results" class="result-card" style="display:none">
+            <p><strong>Status:</strong> <span id="resStatus">--</span></p>
+            <p><strong>Security:</strong> <span id="resAlert">--</span></p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

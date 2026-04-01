@@ -1,0 +1,11 @@
+:root { --p: #2e7d32; --s: #e8f5e9; --t: #1b5e20; }
+body { font-family: sans-serif; background: #f4f7f4; color: var(--t); margin: 0; }
+nav { background: var(--p); color: white; padding: 15px 30px; display: flex; justify-content: space-between; }
+.tabs button { background: none; border: 1px solid white; color: white; padding: 8px 15px; cursor: pointer; border-radius: 4px; }
+.status-bar { text-align: center; background: var(--s); padding: 5px; font-size: 12px; border-bottom: 1px solid #c8e6c9; }
+.tab-content { max-width: 500px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+.main-btn { width: 100%; padding: 12px; background: var(--p); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+.sos-btn { width: 100%; padding: 15px; background: #c62828; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+.map-sim { height: 100px; background: #eee; border: 2px dashed #999; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.result-card { margin-top: 20px; padding: 15px; border-top: 2px solid var(--p); }
