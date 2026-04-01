@@ -1,58 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advaya | Agri-Chain</title>
+    <title>Advaya | Agri-Chain Premium</title>
+    <!-- Google Fonts for modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
-    <nav>
-        <h2>🌿 ADVAYA</h2>
-        <div class="tabs">
-            <button onclick="showTab('farmer')">Farmer</button>
-            <button onclick="showTab('inspector')">Inspector</button>
-            <button onclick="showTab('distributor')">Distributor</button>
-            <button onclick="showTab('public')">Consumer</button>
+    <div id="toast-container"></div>
+
+    <div class="overlay"></div>
+
+    <div class="app-container">
+        <nav class="glass-nav">
+            <h2 class="brand"><i class="fa-solid fa-leaf text-glow"></i> ADVAYA</h2>
+            <div class="tabs">
+                <button class="active" onclick="showTab('farmer', this)"><i class="fa-solid fa-tractor"></i>
+                    Farmer</button>
+                <button onclick="showTab('inspector', this)"><i class="fa-solid fa-microscope"></i> Inspector</button>
+                <button onclick="showTab('distributor', this)"><i class="fa-solid fa-truck"></i> Distributor</button>
+                <button onclick="showTab('public', this)"><i class="fa-solid fa-magnifying-glass"></i> Consumer</button>
+            </div>
+        </nav>
+
+        <div class="status-bar glass-panel">
+            <span><i class="fa-solid fa-network-wired"></i> Network: Localhost 8545 <span
+                    class="dot-online"></span></span>
+            <span class="role-badge">Role: <span id="current-role">FARMER</span></span>
         </div>
-    </nav>
 
-    <div class="status-bar">Network: Localhost 8545 🟢 | Role: <span id="current-role">Guest</span></div>
+        <main class="content-area">
+            <!-- Farmer Section -->
+            <div id="farmer" class="tab-content glass-card fade-in">
+                <h3><i class="fa-solid fa-seedling"></i> Harvest Registration</h3>
+                <p class="subtitle">Mint a new batch onto the Advaya ledger.</p>
+                <div class="input-group">
+                    <i class="fa-solid fa-wheat-awn"></i>
+                    <input type="text" id="crop" placeholder="Crop Name (e.g. Arabica Coffee)">
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="farmerName" placeholder="Farmer Name">
+                </div>
+                <button class="main-btn pulse-glow" onclick="register()">
+                    <span>Mint Batch on Ledger</span> <i class="fa-solid fa-link"></i>
+                </button>
+            </div>
 
-    <div id="farmer" class="tab-content">
-        <h3>1. Harvest Registration</h3>
-        <input type="text" id="crop" placeholder="Crop Name (e.g. Arabica Coffee)">
-        <input type="text" id="farmerName" placeholder="Farmer Name">
-        <button class="main-btn" onclick="register()">Mint Batch on Ledger</button>
-    </div>
+            <!-- Inspector Section -->
+            <div id="inspector" class="tab-content glass-card flex-col" style="display:none">
+                <h3><i class="fa-solid fa-clipboard-check"></i> Quality Assurance</h3>
+                <p class="subtitle">Verify and sign pending batches.</p>
+                <div class="card info-glow">
+                    <span>Pending Verification:</span>
+                    <b class="highlight-text">Batch #101</b>
+                </div>
+                <button class="main-btn btn-blue" onclick="verify()">
+                    <span>Approve Quality (Sign)</span> <i class="fa-solid fa-signature"></i>
+                </button>
+            </div>
 
-    <div id="inspector" class="tab-content" style="display:none">
-        <h3>2. Quality Assurance</h3>
-        <div class="card info">Pending Verification: <b>Batch #101</b></div>
-        <button class="main-btn" style="background:#0288d1;" onclick="verify()">Approve Quality (Sign)</button>
-    </div>
+            <!-- Distributor Section -->
+            <div id="distributor" class="tab-content glass-card" style="display:none">
+                <h3><i class="fa-solid fa-route"></i> Transit Security</h3>
+                <p class="subtitle">Live tracking & critical interventions.</p>
+                <div class="map-sim">
+                    <div class="path-line"></div>
+                    <div class="dot moving-dot"></div>
+                    <div class="map-labels">
+                        <span><i class="fa-solid fa-tractor"></i> Farm</span>
+                        <span><i class="fa-solid fa-industry"></i> Processing</span>
+                    </div>
+                </div>
+                <button class="sos-btn" onclick="triggerSOS()">
+                    <i class="fa-solid fa-triangle-exclamation"></i> EMERGENCY SOS
+                </button>
+            </div>
 
-    <div id="distributor" class="tab-content" style="display:none">
-        <h3>3. Transit Security</h3>
-        <div class="map-sim">
-            <div class="dot"></div>
-            📍 Route: Farm ➔ Processing Center
-        </div>
-        <button class="sos-btn" onclick="triggerSOS()">🆘 EMERGENCY SOS</button>
-    </div>
+            <!-- Consumer Section -->
+            <div id="public" class="tab-content glass-card" style="display:none">
+                <h3><i class="fa-solid fa-shield-halved"></i> Verify Product Journey</h3>
+                <p class="subtitle">Audit the complete lifecycle of a batch.</p>
+                <div class="input-group">
+                    <i class="fa-solid fa-barcode"></i>
+                    <input type="number" id="searchId" placeholder="Enter Batch ID (Try 1 or 2)">
+                </div>
+                <button class="main-btn search-btn" onclick="search()">
+                    <span>Audit Lifecycle</span> <i class="fa-solid fa-magnifying-glass-chart"></i>
+                </button>
 
-    <div id="public" class="tab-content" style="display:none">
-        <h3>4. Verify Product Journey</h3>
-        <input type="number" id="searchId" placeholder="Enter Batch ID">
-        <button class="main-btn" onclick="search()">Audit Lifecycle</button>
-        
-        <div id="results" class="result-card" style="display:none">
-            <p>📦 <b>Crop:</b> <span id="resCrop">--</span></p>
-            <p>🛡️ <b>Quality:</b> <span id="resQual">--</span></p>
-            <p>🚨 <b>Security:</b> <span id="resAlert">--</span></p>
-        </div>
+                <div id="results" class="result-card glass-inner" style="display:none">
+                    <div class="result-item">
+                        <div class="icon-box"><i class="fa-solid fa-box"></i></div>
+                        <div class="result-text">
+                            <span class="label">Crop</span>
+                            <span id="resCrop" class="value">--</span>
+                        </div>
+                    </div>
+                    <div class="result-item">
+                        <div class="icon-box"><i class="fa-solid fa-certificate"></i></div>
+                        <div class="result-text">
+                            <span class="label">Quality</span>
+                            <span id="resQual" class="value">--</span>
+                        </div>
+                    </div>
+                    <div class="result-item">
+                        <div class="icon-box alert-icon"><i class="fa-solid fa-shield"></i></div>
+                        <div class="result-text">
+                            <span class="label">Security</span>
+                            <span id="resAlert" class="value">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
     <script src="app.js"></script>
 </body>
+
 </html>
