@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Advaya | Supply Chain</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advaya | Agri-Chain</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -10,34 +11,45 @@
         <h2>🌿 ADVAYA</h2>
         <div class="tabs">
             <button onclick="showTab('farmer')">Farmer</button>
+            <button onclick="showTab('inspector')">Inspector</button>
             <button onclick="showTab('distributor')">Distributor</button>
             <button onclick="showTab('public')">Consumer</button>
         </div>
     </nav>
 
-    <div id="wallet-status" class="status-bar">MetaMask: Connected 🟢</div>
+    <div class="status-bar">Network: Localhost 8545 🟢 | Role: <span id="current-role">Guest</span></div>
 
     <div id="farmer" class="tab-content">
-        <h3>Register New Harvest</h3>
-        <input type="text" id="crop" placeholder="Crop Name (e.g. Saffron)">
+        <h3>1. Harvest Registration</h3>
+        <input type="text" id="crop" placeholder="Crop Name (e.g. Arabica Coffee)">
         <input type="text" id="farmerName" placeholder="Farmer Name">
-        <button class="main-btn" onclick="register()">Add to Blockchain</button>
+        <button class="main-btn" onclick="register()">Mint Batch on Ledger</button>
+    </div>
+
+    <div id="inspector" class="tab-content" style="display:none">
+        <h3>2. Quality Assurance</h3>
+        <div class="card info">Pending Verification: <b>Batch #101</b></div>
+        <button class="main-btn" style="background:#0288d1;" onclick="verify()">Approve Quality (Sign)</button>
     </div>
 
     <div id="distributor" class="tab-content" style="display:none">
-        <h3>Transit Security Tracking</h3>
-        <div class="map-sim">📍 Route: Hub-A ➔ Warehouse-B</div>
-        <button class="sos-btn" onclick="triggerSOS()">🆘 EMERGENCY STOP</button>
-        <p id="sos-msg" style="color:red; display:none; font-weight:bold; margin-top:10px;">⚠️ UNAUTHORIZED STOP DETECTED</p>
+        <h3>3. Transit Security</h3>
+        <div class="map-sim">
+            <div class="dot"></div>
+            📍 Route: Farm ➔ Processing Center
+        </div>
+        <button class="sos-btn" onclick="triggerSOS()">🆘 EMERGENCY SOS</button>
     </div>
 
     <div id="public" class="tab-content" style="display:none">
-        <h3>Verify Product Integrity</h3>
+        <h3>4. Verify Product Journey</h3>
         <input type="number" id="searchId" placeholder="Enter Batch ID">
-        <button class="main-btn" onclick="search()">Check Ledger</button>
+        <button class="main-btn" onclick="search()">Audit Lifecycle</button>
+        
         <div id="results" class="result-card" style="display:none">
-            <p><strong>Status:</strong> <span id="resStatus">--</span></p>
-            <p><strong>Security:</strong> <span id="resAlert">--</span></p>
+            <p>📦 <b>Crop:</b> <span id="resCrop">--</span></p>
+            <p>🛡️ <b>Quality:</b> <span id="resQual">--</span></p>
+            <p>🚨 <b>Security:</b> <span id="resAlert">--</span></p>
         </div>
     </div>
 
