@@ -1,128 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advaya | Agri-Chain Premium</title>
-    <!-- Google Fonts for modern typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Advaya Pro | Fleet & Logistics Hub</title>
     <link rel="stylesheet" href="style.css">
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
-    <div id="toast-container"></div>
-
-    <div class="overlay"></div>
-
-    <div class="app-container">
+    <div id="app-wrapper">
         <nav class="glass-nav">
-            <h2 class="brand"><i class="fa-solid fa-leaf text-glow"></i> ADVAYA</h2>
-            <div class="tabs">
-                <button class="active" onclick="showTab('farmer', this)"><i class="fa-solid fa-tractor"></i>
-                    Farmer</button>
-                <button onclick="showTab('inspector', this)"><i class="fa-solid fa-microscope"></i> Inspector</button>
-                <button onclick="showTab('distributor', this)"><i class="fa-solid fa-truck"></i> Distributor</button>
-                <button onclick="showTab('public', this)"><i class="fa-solid fa-magnifying-glass"></i> Consumer</button>
-            </div>
+            <h1 class="neon-text">ADVAYA <span class="version">v3.5 ENTERPRISE</span></h1>
+            <div id="userNode">System Status: Operational</div>
         </nav>
 
-        <div class="status-bar glass-panel">
-            <span><i class="fa-solid fa-network-wired"></i> Network: Localhost 8545 <span
-                    class="dot-online"></span></span>
-            <span class="role-badge">Role: <span id="current-role">FARMER</span></span>
+        <div class="main-layout">
+            <aside class="sidebar">
+                <div class="track-item active" id="p1"><span>01</span> CROP MINTING</div>
+                <div class="track-item" id="p2"><span>02</span> QA AUDIT LAB</div>
+                <div class="track-item" id="p3"><span>03</span> FLEET LOGISTICS</div>
+                <div class="track-item" id="p4"><span>04</span> CONSUMER HUB</div>
+            </aside>
+
+            <section class="content-engine">
+                <div id="v1" class="stage-container">
+                    <div class="card">
+                        <h3>🚜 HARVEST ON-BOARDING</h3>
+                        <div class="form-grid">
+                            <input type="text" id="cName" placeholder="Commodity Type">
+                            <input type="number" id="cWgt" placeholder="Net Weight (Metric Tons)">
+                            <input type="date" id="cDate">
+                            <input type="text" id="cLand" placeholder="Geological Plot ID">
+                        </div>
+                        <div class="upload-zone">
+                            <label for="cImg" class="upload-label">📸 UPLOAD CRYPTOGRAPHIC EVIDENCE</label>
+                            <input type="file" id="cImg" accept="image/*" onchange="ui.preview(event, 'imgPrev')">
+                            <img id="imgPrev" class="hidden" style="width:100%; border-radius:15px; margin-top:15px;">
+                        </div>
+                        <button class="glow-btn" onclick="core.mint()">EXECUTE MINT</button>
+                    </div>
+                </div>
+
+                <div id="v2" class="stage-container hidden">
+                    <div class="card">
+                        <h3>🔍 QUALITY CONTROL AUDIT</h3>
+                        <div class="audit-window">
+                            <img id="auditImg" src="" alt="Batch Asset Preview">
+                            <div class="batch-tag">LEDGER ID: #<span id="curIdText">--</span></div>
+                        </div>
+                        <button class="glow-btn verify" onclick="core.verify()">ATTEST & SIGN OFF ✅</button>
+                    </div>
+                </div>
+
+                <div id="v3" class="stage-container hidden">
+                    <div class="card">
+                        <h3>🚚 SMART FLEET MANAGEMENT</h3>
+                        <div id="map"></div>
+                        
+                        <div class="fleet-info-grid">
+                            <div class="fleet-card">
+                                <h5>OPERATOR DETAILS</h5>
+                                <p id="driverName">Driver: Initializing...</p>
+                                <p id="vehicleNum">Vehicle: KA-01-XXXX</p>
+                                <button class="call-btn" onclick="alert('Establishing Secure VoIP Link... (Simulation Only)')">📞 CONTACT DRIVER</button>
+                            </div>
+                            <div class="fleet-card">
+                                <h5>TELEMETRY</h5>
+                                <p id="distText">Odometer: 0.00 km</p>
+                                <p>Status: <span style="color:var(--neon)">EN ROUTE</span></p>
+                            </div>
+                        </div>
+
+                        <button class="glow-btn" id="shipBtn" onclick="core.startLogistics()">DISPATCH SHIPMENT</button>
+                    </div>
+                </div>
+
+                <div id="v4" class="stage-container hidden">
+                    <div class="card">
+                        <h3>🥗 DIGITAL PROVENANCE HUB</h3>
+                        <div class="search-section">
+                            <input type="number" id="searchId" placeholder="Enter Global Batch ID">
+                            <button class="glow-btn" onclick="core.search()">GENERATE AUDIT REPORT</button>
+                        </div>
+                        <div id="finalLedger" class="hidden"></div>
+                    </div>
+                </div>
+            </section>
         </div>
-
-        <main class="content-area">
-            <!-- Farmer Section -->
-            <div id="farmer" class="tab-content glass-card fade-in">
-                <h3><i class="fa-solid fa-seedling"></i> Harvest Registration</h3>
-                <p class="subtitle">Mint a new batch onto the Advaya ledger.</p>
-                <div class="input-group">
-                    <i class="fa-solid fa-wheat-awn"></i>
-                    <input type="text" id="crop" placeholder="Crop Name (e.g. Arabica Coffee)">
-                </div>
-                <div class="input-group">
-                    <i class="fa-solid fa-user"></i>
-                    <input type="text" id="farmerName" placeholder="Farmer Name">
-                </div>
-                <button class="main-btn pulse-glow" onclick="register()">
-                    <span>Mint Batch on Ledger</span> <i class="fa-solid fa-link"></i>
-                </button>
-            </div>
-
-            <!-- Inspector Section -->
-            <div id="inspector" class="tab-content glass-card flex-col" style="display:none">
-                <h3><i class="fa-solid fa-clipboard-check"></i> Quality Assurance</h3>
-                <p class="subtitle">Verify and sign pending batches.</p>
-                <div class="card info-glow">
-                    <span>Pending Verification:</span>
-                    <b class="highlight-text">Batch #101</b>
-                </div>
-                <button class="main-btn btn-blue" onclick="verify()">
-                    <span>Approve Quality (Sign)</span> <i class="fa-solid fa-signature"></i>
-                </button>
-            </div>
-
-            <!-- Distributor Section -->
-            <div id="distributor" class="tab-content glass-card" style="display:none">
-                <h3><i class="fa-solid fa-route"></i> Transit Security</h3>
-                <p class="subtitle">Live tracking & critical interventions.</p>
-                <div class="map-sim">
-                    <div class="path-line"></div>
-                    <div class="dot moving-dot"></div>
-                    <div class="map-labels">
-                        <span><i class="fa-solid fa-tractor"></i> Farm</span>
-                        <span><i class="fa-solid fa-industry"></i> Processing</span>
-                    </div>
-                </div>
-                <button class="sos-btn" onclick="triggerSOS()">
-                    <i class="fa-solid fa-triangle-exclamation"></i> EMERGENCY SOS
-                </button>
-            </div>
-
-            <!-- Consumer Section -->
-            <div id="public" class="tab-content glass-card" style="display:none">
-                <h3><i class="fa-solid fa-shield-halved"></i> Verify Product Journey</h3>
-                <p class="subtitle">Audit the complete lifecycle of a batch.</p>
-                <div class="input-group">
-                    <i class="fa-solid fa-barcode"></i>
-                    <input type="number" id="searchId" placeholder="Enter Batch ID (Try 1 or 2)">
-                </div>
-                <button class="main-btn search-btn" onclick="search()">
-                    <span>Audit Lifecycle</span> <i class="fa-solid fa-magnifying-glass-chart"></i>
-                </button>
-
-                <div id="results" class="result-card glass-inner" style="display:none">
-                    <div class="result-item">
-                        <div class="icon-box"><i class="fa-solid fa-box"></i></div>
-                        <div class="result-text">
-                            <span class="label">Crop</span>
-                            <span id="resCrop" class="value">--</span>
-                        </div>
-                    </div>
-                    <div class="result-item">
-                        <div class="icon-box"><i class="fa-solid fa-certificate"></i></div>
-                        <div class="result-text">
-                            <span class="label">Quality</span>
-                            <span id="resQual" class="value">--</span>
-                        </div>
-                    </div>
-                    <div class="result-item">
-                        <div class="icon-box alert-icon"><i class="fa-solid fa-shield"></i></div>
-                        <div class="result-text">
-                            <span class="label">Security</span>
-                            <span id="resAlert" class="value">--</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
     </div>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <script src="app.js"></script>
 </body>
-
 </html>
+<div id="v4" class="stage-container hidden">
+    <div class="card">
+        <h3>🥗 CONSUMER AUDIT PORTAL</h3>
+        <div class="search-section">
+            <input type="number" id="searchId" placeholder="Enter Global Batch ID">
+            <button class="glow-btn" onclick="core.search()">QUERY BLOCKCHAIN</button>
+        </div>
+        
+        <div id="qr-wrapper" class="hidden" style="margin-top: 20px; text-align: center;">
+            <p style="font-size: 12px; color: var(--neon); margin-bottom: 10px;">DIGITAL PASSPORT GENERATED</p>
+            <div id="qrcode" style="display: inline-block; padding: 10px; background: white; border-radius: 10px;"></div>
+        </div>
+
+        <div id="finalLedger" class="hidden"></div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>

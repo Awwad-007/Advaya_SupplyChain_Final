@@ -1,135 +1,155 @@
-// Toast Notification System
-function showToast(title, message, type = 'success', icon = 'fa-check-circle') {
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    
-    toast.innerHTML = `
-        <i class="fa-solid ${icon}"></i>
-        <div class="toast-content">
-            <span class="title">${title}</span>
-            <span class="desc">${message}</span>
-        </div>
-    `;
-    
-    container.appendChild(toast);
-    
-    // Trigger animation
-    setTimeout(() => toast.classList.add('show'), 10);
-    
-    // Remove after 4s
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 400);
-    }, 4000);
-}
+const ADDR = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const ABI = [
+    "function registerHarvest(string c, uint256 w, string d, string l) public returns (uint256)",
+    "function verifyQuality(uint256 id) public",
+    "function updateLogistics(uint256 id, uint256 dist) public",
+    "function finalizeDelivery(uint256 id) public",
+    "function getBatchData(uint256 id) public view returns (tuple(uint256 id, string crop, uint256 weight, string date, string landId, uint8 stage, address farmer, address auditor, bool isVerified, uint256 distance, uint256 ts))",
+    "function totalBatches() public view returns (uint256)"
+];
 
-// Tab Switching Logic
-function showTab(name, btnElement) {
-    // Hide all
-    const tabs = document.querySelectorAll('.tab-content');
-    tabs.forEach(t => {
-        t.style.display = 'none';
-        t.classList.remove('fade-in');
-    });
-    
-    // Deactivate all buttons
-    document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
-    
-    // Show selected
-    const selectedTab = document.getElementById(name);
-    selectedTab.style.display = 'flex';
-    selectedTab.style.flexDirection = 'column';
-    
-    // Trigger animation
-    setTimeout(() => selectedTab.classList.add('fade-in'), 10);
-    
-    if (btnElement) {
-        btnElement.classList.add('active');
-    }
-    
-    document.getElementById('current-role').innerText = name.toUpperCase();
-}
+const core = {
+    con: null, id: 0, map: null, marker: null,
 
-// Initialize on first load
-document.addEventListener('DOMContentLoaded', () => {
-    showTab('farmer', document.querySelector('.tabs button.active'));
-});
+    async init() {
+        const prov = new ethers.providers.Web3Provider(window.ethereum);
+        await prov.send("eth_requestAccounts", []);
+        this.con = new ethers.Contract(ADDR, ABI, prov.getSigner());
+        this.render(1);
+    },
 
-// Farmer Action
-function register() {
-    const crop = document.getElementById('crop').value || 'Arabica Coffee';
-    showToast('Blockchain Success', `Batch for ${crop} minted with a unique Hash! ⛓️`, 'success', 'fa-link');
-}
-
-// Inspector Action
-function verify() {
-    showToast('Signature Applied', 'Batch #101 is now Certified Grade-A.', 'info', 'fa-certificate');
-}
-
-// Distributor Action (The SOS Trigger)
-function triggerSOS() {
-    const body = document.body;
-    body.classList.add('sos-active');
-    
-    showToast('CRITICAL ALERT', 'SOS Triggered. Unauthorized stop logged at GPS 12.97, 77.59.', 'error', 'fa-triangle-exclamation');
-    
-    const movingDot = document.querySelector('.moving-dot');
-    if (movingDot) movingDot.style.animationPlayState = 'paused';
-    
-    // Reset after 5s just for demo purposes
-    setTimeout(() => {
-        body.classList.remove('sos-active');
-        if (movingDot) movingDot.style.animationPlayState = 'running';
-    }, 5000);
-}
-
-// Consumer Audit Search
-function search() {
-    const id = document.getElementById('searchId').value;
-    const res = document.getElementById('results');
-    
-    // Reset animation
-    res.style.display = 'none';
-    res.classList.remove('fade-in');
-    
-    setTimeout(() => {
-        res.style.display = 'flex';
-        res.classList.add('fade-in');
-        
-        const cropEl = document.getElementById('resCrop');
-        const qualEl = document.getElementById('resQual');
-        const alertEl = document.getElementById('resAlert');
-        const alertIconBox = document.querySelector('.alert-icon');
-        const alertIconEl = document.querySelector('.alert-icon i');
-
-        if(id === "1" || id === "") { // Default safe case
-            cropEl.innerText = "Premium Saffron";
-            qualEl.innerText = "Verified Grade-A";
-            qualEl.style.color = "var(--primary)";
-            
-            alertEl.innerText = "Safe Transit";
-            alertEl.style.color = "var(--primary)";
-            
-            alertIconBox.style.background = "rgba(0,230,118,0.1)";
-            alertIconBox.style.color = "var(--primary)";
-            alertIconEl.className = "fa-solid fa-shield";
-            
-            showToast('Audit Complete', 'Ledger verified. Everything looks good.', 'success', 'fa-check');
-        } else {
-            // Tampered simulation
-            cropEl.innerText = "Basmati Rice";
-            qualEl.innerText = "Pending Verification";
-            qualEl.style.color = "var(--text-muted)";
-            
-            alertEl.innerText = "SECURITY BREACH DETECTED";
-            alertEl.style.color = "var(--danger)";
-            
-            alertIconBox.style.background = "rgba(255,23,68,0.1)";
-            alertIconBox.style.color = "var(--danger)";
-            alertIconEl.className = "fa-solid fa-triangle-exclamation";
-            
-            showToast('Warning', 'Tampering detected in batch history.', 'error', 'fa-triangle-exclamation');
+    render(s) {
+        document.querySelectorAll('.stage-container').forEach((v, i) => v.classList.toggle('hidden', i+1 !== s));
+        document.querySelectorAll('.track-item').forEach((t, i) => t.classList.toggle('active', i+1 <= s));
+        if(s === 3) {
+            this.loadMap();
+            this.generateFleetData();
         }
-    }, 100);
+    },
+
+    generateFleetData() {
+        const names = ["Ramesh Kumar", "Suresh Raina", "Abdul Khan", "Vikram Singh"];
+        const vehicles = ["KA-01-EF-4421", "KA-05-GH-8890", "KA-03-MK-1122"];
+        
+        const randomName = names[Math.floor(Math.random() * names.length)];
+        const randomVehicle = vehicles[Math.floor(Math.random() * vehicles.length)];
+        
+        document.getElementById('driverName').innerText = `Driver: ${randomName}`;
+        document.getElementById('vehicleNum').innerText = `Vehicle: ${randomVehicle}`;
+        
+        // Save these to localStorage so the Consumer can see them later too
+        localStorage.setItem(`fleet_driver_${this.id}`, randomName);
+        localStorage.setItem(`fleet_veh_${this.id}`, randomVehicle);
+    },
+
+    async mint() {
+        try {
+            const tx = await this.con.registerHarvest(
+                document.getElementById('cName').value,
+                document.getElementById('cWgt').value,
+                document.getElementById('cDate').value,
+                document.getElementById('cLand').value
+            );
+            await tx.wait();
+            this.id = await this.con.totalBatches();
+            
+            const imgData = document.getElementById('imgPrev').src;
+            localStorage.setItem(`batch_img_${this.id}`, imgData);
+            
+            document.getElementById('auditImg').src = imgData;
+            document.getElementById('curIdText').innerText = this.id;
+            this.render(2);
+        } catch (e) { alert("Execution Halted: Block Error."); }
+    },
+
+    async verify() {
+        await (await this.con.verifyQuality(this.id)).wait();
+        this.render(3);
+    },
+
+    loadMap() {
+        if(this.map) return;
+        this.map = L.map('map').setView([12.9716, 77.5946], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
+        this.marker = L.marker([12.9716, 77.5946]).addTo(this.map);
+    },
+
+    async startLogistics() {
+        let lat = 12.9716; let dist = 0;
+        document.getElementById('shipBtn').disabled = true;
+        const move = setInterval(() => {
+            lat += 0.0025; dist += 22;
+            this.marker.setLatLng([lat, 77.5946]);
+            this.map.panTo([lat, 77.5946]);
+            document.getElementById('distText').innerText = `Odometer: ${dist} km`;
+        }, 300);
+
+        setTimeout(async () => {
+            clearInterval(move);
+            await (await this.con.updateLogistics(this.id, dist)).wait();
+            await (await this.con.finalizeDelivery(this.id)).wait();
+            this.render(4);
+        }, 3000);
+    },
+
+    // Add this to your core object in app.js
+
+async search() {
+    const sid = document.getElementById('searchId').value;
+    if (!sid) return alert("Enter a valid ID");
+
+    try {
+        const b = await this.con.getBatchData(sid);
+        const savedImg = localStorage.getItem(`batch_img_${sid}`);
+        const dName = localStorage.getItem(`fleet_driver_${sid}`);
+        const dVeh = localStorage.getItem(`fleet_veh_${sid}`);
+        
+        // --- QR CODE GENERATION ---
+        const qrContainer = document.getElementById("qrcode");
+        qrContainer.innerHTML = ""; // Clear old QR
+        new QRCode(qrContainer, {
+            text: `https://advaya-vtu.pro/audit/${sid}`, // Simulated URL
+            width: 128,
+            height: 128,
+            colorDark : "#000000",
+            colorLight : "#ffffff"
+        });
+        document.getElementById('qr-wrapper').classList.remove('hidden');
+
+        // --- UPDATE LEDGER UI ---
+        const res = document.getElementById('finalLedger');
+        res.classList.remove('hidden');
+        res.innerHTML = `
+            <div class="ledger-box" style="margin-top:20px;">
+                <img src="${savedImg}" style="width:100%; border-radius:15px; margin-bottom:20px;">
+                <h4 style="color:var(--neon)">SECURE AUDIT: BATCH #${sid}</h4>
+                <div class="audit-details">
+                    <p><strong>CROP:</strong> ${b.crop} ✅</p>
+                    <p><strong>LAND ID:</strong> ${b.landId}</p>
+                    <p><strong>DRIVER:</strong> ${dName}</p>
+                    <p><strong>VEHICLE:</strong> ${dVeh}</p>
+                    <p><strong>LOGISTICS:</strong> ${b.distance} KM</p>
+                </div>
+                <p style="font-size:9px; color:#444; margin-top:15px; word-break:break-all;">
+                    ETH-HASH: ${ethers.utils.id(sid + b.crop)}
+                </p>
+            </div>
+        `;
+    } catch (e) { 
+        alert("Batch ID not found on the Ethereum Ledger."); 
+    }
 }
+};
+
+const ui = {
+    preview: (e, target) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const p = document.getElementById(target);
+            p.src = reader.result; p.classList.remove('hidden');
+        };
+        reader.readAsDataURL(e.target.files[0]);
+    }
+};
+
+window.addEventListener('load', () => core.init());
